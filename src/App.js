@@ -1,6 +1,7 @@
 import React from "react";
 import { useEffect } from "react";
 import { useState } from "react";
+import { FaSearch } from "react-icons/fa";
 
 import Photo from "./Photo";
 
@@ -20,7 +21,8 @@ function App() {
       setLoading(true)
       const response = await fetch(url)
       const data = await response.json()
-      console.log(data);
+      // console.log(data);
+      setPhotos(data)
     } catch (error) {
       setLoading(false)
       console.log(error);
@@ -31,10 +33,33 @@ function App() {
     fetchImages()
   },[])
 
+  const handleSubmit = (e) => {
+    e.preventDefault()
+    console.log('hello')
+  }
+
   return (
-    <>
-      <h1>Stock Photos</h1>
-    </>
+    <main>
+      <section className="search">
+        <form className="search-form">
+          <input
+            type="text"
+            placeholder="enter your keyword"
+            className="form-input"
+          />
+          <button type="submit" className="submit-btn" onClick={handleSubmit}>
+            <FaSearch />
+          </button>
+        </form>
+      </section>
+      <section className="photos">
+        <div className="photos-center">
+          {photos.map((image, index) => {
+            return <Photo key={index} {...image} />;
+          })}
+        </div>
+      </section>
+    </main>
   );
 }
 
