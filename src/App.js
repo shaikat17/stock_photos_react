@@ -4,6 +4,7 @@ import { useState } from "react";
 
 import Photo from "./Photo";
 
+const clientId = `?client_id=${process.env.REACT_APP_ACCESS_KEY}`
 const mainUrl = `https://api.unsplash.com/photos/`;
 const searchUrl = `https://api.unsplash.com/search/photos/`;
 
@@ -13,7 +14,7 @@ function App() {
 
   const fetchImages = async () => {
     let url;
-    url = `${mainUrl}?client_id=sScaMD6EiQINBRNWxbaoprVTHSOL26PWIfx38G-obbE`
+    url = `${mainUrl}${clientId}`
 
     try {
       setLoading(true)
