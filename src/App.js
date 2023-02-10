@@ -16,14 +16,17 @@ function App() {
 
   const fetchImages = async () => {
     let url;
-    url = `${mainUrl}${clientId}`
+    const urlPage = `&page=${page}`
+    url = `${mainUrl}${clientId}${urlPage}`
 
     try {
       setLoading(true)
       const response = await fetch(url)
       const data = await response.json()
       console.log(data);
-      setPhotos(data)
+      setPhotos((oldPhotos) => {
+        return [...oldPhotos, ...data]
+      })
       setLoading(false)
     } catch (error) {
       setLoading(false)
@@ -33,12 +36,15 @@ function App() {
 
   useEffect(() => {
     fetchImages()
-  },[])
+  },[page])
 
   useEffect(() => {
     const event = window.addEventListener('scroll', () => {
       if((window.innerHeight + window.scrollY) >= document.body.scrollHeight - 2) {
-        console.log('worked')
+        // console.log('worked')
+        setPage((oldValue) => {
+          return oldValue + 1
+        })
       }
     })
     return () => { window.removeEventListener('scroll', event) }
