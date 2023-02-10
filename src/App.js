@@ -21,8 +21,9 @@ function App() {
       setLoading(true)
       const response = await fetch(url)
       const data = await response.json()
-      // console.log(data);
+      console.log(data);
       setPhotos(data)
+      setLoading(false)
     } catch (error) {
       setLoading(false)
       console.log(error);
@@ -58,6 +59,7 @@ function App() {
             return <Photo key={index} {...image} />;
           })}
         </div>
+        { loading && <h2 className="loading">Loading...</h2> }
       </section>
     </main>
   );
