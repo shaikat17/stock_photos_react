@@ -1,6 +1,5 @@
 import React from "react";
-import { useEffect } from "react";
-import { useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { FaSearch } from "react-icons/fa";
 
 import Photo from "./Photo";
@@ -12,8 +11,10 @@ const searchUrl = `https://api.unsplash.com/search/photos/`;
 function App() {
   const [loading, setLoading] = useState(false)
   const [photos, setPhotos] = useState([])
-  const [page, setPage] = useState(0)
+  const [page, setPage] = useState(1)
   const [query, setQuery] = useState('')
+  const mounted = useRef(false);
+  const [newImages, setNewImages] = useState(false);
 
   const fetchImages = async () => {
     let url;
@@ -41,34 +42,50 @@ function App() {
           return [...oldPhotos, ...data];
         }
       })
+      setNewImages(false)
       setLoading(false)
     } catch (error) {
       setLoading(false)
+      setNewImages(false)
       console.log(error);
     }
   }
 
   useEffect(() => {
     fetchImages()
+    // eslint-disable-next-line
   },[page])
 
   useEffect(() => {
-    const event = window.addEventListener('scroll', () => {
-      if((window.innerHeight + window.scrollY) >= document.body.scrollHeight - 2) {
-        // console.log('worked')
-        setPage((oldValue) => {
-          return oldValue + 1
-        })
-      }
-    })
-    return () => { window.removeEventListener('scroll', event) }
-  },[])
+   if (!mounted.current) {
+    mounted.current = true
+    return
+   }
+   if (!newImages) return;
+    if (loading) return;
+    setPage((oldPage) => oldPage + 1);
+    // eslint-disable-next-line
+  },[newImages])
+
+  const event = () => {
+    if (window.innerHeight + window.scrollY >= document.body.scrollHeight - 2) {
+      setNewImages(true);
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener('scroll', event);
+    return () => window.removeEventListener('scroll', event);
+  }, []);
 
   const handleSubmit = (e) => {
     e.preventDefault()
     // console.log('hello')
-    setPage(1)
-    fetchImages()
+    if (!query) return;
+    if (page === 1) {
+      fetchImages();
+    }
+    setPage(1);
   }
 
   return (
